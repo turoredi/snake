@@ -4,28 +4,31 @@
 #include <stdbool.h>
 #define HEIGHT 10
 #define WIDTH 20
-#define snake_row 9
+#define snake_row 199
 #define snake_col 2
-#define alma 10
-void init_field(char matrix[HEIGHT][WIDTH],int a){
+#define alma 198
+void put_alma(char matrix[HEIGHT][WIDTH],int snake[snake_row][snake_col],int snake_hossz){
+    srand(time(NULL));
+    int rand_row;
+    int rand_col;
+    
+    do{
+        rand_col = rand() % WIDTH;
+        rand_row = rand() % HEIGHT;
+        for(int i = 0;i<snake_hossz;i++){
+            if (snake[i][0] != rand_row && snake[i][1] != rand_col && matrix[rand_row][rand_col] == ' '){
+                matrix[rand_row][rand_col] = 'a';
+            }
+        }
+    } while (matrix[rand_row][rand_col] != 'a');
+}
+void init_field(char matrix[HEIGHT][WIDTH], int snake_tabla[snake_row][snake_col],int snake_hossz){
     for (int i=0;i<HEIGHT;i++) {
         for (int j = 0;j<WIDTH;j++) {
             matrix[i][j] = ' ';
         }
     }
-    srand(time(NULL));
-    int rand_row;
-    int rand_col;
-    int counter = 0;
-    while(counter<alma){
-        rand_col = rand() % WIDTH;
-        rand_row = rand() % HEIGHT;
-        if (matrix[rand_row][rand_col] == ' ') {
-            matrix[rand_row][rand_col] = 'a';
-            counter++;
-        }
-
-}
+    put_alma(matrix,snake_tabla,snake_hossz);
 }
 void init_snake(int matrix[199][2]){
     matrix[0][0] = 1;
@@ -151,8 +154,6 @@ int update_snake(char matrix[HEIGHT][WIDTH],int snake[snake_row][snake_col],char
             snake[i][0]=snake[i-1][0];
             snake[i][1]=snake[i-1][1];
         }
-        //snake[snake_hossz-1][0] = snake[snake_hossz-2][0];
-        //snake[snake_hossz-1][1] = snake[snake_hossz-2][1];
         snake[0][0]=new_head[0][0];
         snake[0][1]=new_head[0][1];
         return 1;
@@ -182,7 +183,7 @@ int main() {
     int snake_hossz = 1;
     int tabla[HEIGHT][WIDTH];
     
-    init_field(tabla,alma);
+    init_field(tabla,snake_tabla,snake_hossz);
     init_snake(snake_tabla);
     int alma_count = alma;
     bool hiba = false;
@@ -198,9 +199,11 @@ int main() {
             if ( update == -1 || update == -2) {hiba = true;}
             else if (update == 1)
         {
-                alma_count--;
+            alma_count--;
             snake_hossz++;
-
+            if (alma_count>0){
+                put_alma(tabla,snake_tabla,snake_hossz);
+            }
         }
         }   
         
